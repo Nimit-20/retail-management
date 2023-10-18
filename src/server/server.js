@@ -37,13 +37,6 @@ const pool = mysql.createPool({
 //   console.log("Connected to MySQL database");
 // });
 
-pool.on('connection', function (connection) {
-  assert.ok(connection);
-  done();
- });
-
-
-
 app.use(express.json());
 
 
