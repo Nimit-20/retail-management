@@ -10,16 +10,8 @@ const corsOptions = {
 };
 require('dotenv').config()
 app.use(cors(corsOptions));
-// Use body-parser middleware to parse JSON data
-app.use(bodyParser.json());
 
-// var connection = mysql.createConnection({
-//   host: "localhost",
-//   user: "nimit",
-//   password: "admin",
-//   database: "Retail_DB",
-//   port: 3306,
-// });
+app.use(bodyParser.json());
 
 const pool = mysql.createPool({
   host: "localhost",
@@ -28,14 +20,6 @@ const pool = mysql.createPool({
   database: "Retail_DB",
   port: 3306,
 });
-
-// connection.connect((err) => {
-//   if (err) {
-//     console.error("Error connecting to the database:", err);
-//     return;
-//   }
-//   console.log("Connected to MySQL database");
-// });
 
 app.use(express.json());
 
@@ -46,34 +30,12 @@ app.post('/login', (req, res) => {
 
   const retrieve = `SELECT * FROM user WHERE username = ? AND password = ?`
 
-  // connection.query(retrieve, [username, password], (err, rows) => {
-  //   if (err) {
-  //     console.log("Error");
-  //     console.log(err);
-  //     res.send({ err: err });
-  //   }
-
-  //   else if (rows.length > 0) {
-  //     console.log("Success");
-  //     console.log(rows);
-  //     res.send({ rows: rows });
-  //   }
-  //   else {
-  //     console.log("Invalid password");
-  //     res.send({ message: "Invalid username or password" });
-  //   }
-
-  //   // Close the database connection when done
-  //   connection.end();
-
-  // });
-
   pool.getConnection((err, connection) => {
     if (err) {
       console.log("Error connecting to the database:", err);
       return res.status(500).json({ error: "Database connection error" });
     }
-
+    
     connection.query(retrieve, [username, password], (err, rows) => {
       if (err) {
         console.log("Error:", err);
