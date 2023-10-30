@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Login.css";
-function Login() {
+import { useNavigate } from "react-router-dom";
+function Login({ onLogin }) {
 
      const [username, setUername] = useState("");
      const [password, setPassword] = useState ("");
      
      const [loginStatus, setLoginStatus] = useState("");
     
+     const navigate = useNavigate();
      const login = () => {
         axios.post("http://localhost:8080/login", {
           username: username,
@@ -15,13 +17,14 @@ function Login() {
         }).then((response) => {
             console.log(response.data);
           if (response.data.message) {
-            //  setLoginStatus (response.data.message);
             setLoginStatus ("Invalid password");
           } else if (response.data.err){
-            //  setLoginStatus (response.data[0].message);
             setLoginStatus ("Error occured, check console.");
          } else {
+            const loginDetails = response.data.rows[0];
+            onLogin(loginDetails)
             setLoginStatus ("Successfully logged in as " + username);
+            navigate("/dashboard")
          }
        });
      };

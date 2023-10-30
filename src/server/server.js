@@ -28,12 +28,15 @@ app.post('/login', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  const retrieve = `SELECT * FROM user WHERE username = ? AND password = ?`
+  const retrieve = `SELECT * FROM supervisor WHERE username = ? AND password = ?`
 
   pool.getConnection((err, connection) => {
     if (err) {
       console.log("Error connecting to the database:", err);
       return res.status(500).json({ error: "Database connection error" });
+    }
+    else {
+      console.log("Database connection successful");
     }
     
     connection.query(retrieve, [username, password], (err, rows) => {
