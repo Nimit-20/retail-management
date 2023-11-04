@@ -1,8 +1,11 @@
 import React from 'react'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+
 function Customers({ loginDetails }) { // TODO: display customer details that have made purchases from the store
+  
   const store_id = loginDetails.store_id;
+  
   useEffect(() => {
     // Use the login details to get store details from the backend
     axios

@@ -59,10 +59,9 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/purchases', (req, res) => {
-  console.log(req); 
   const store_id = req.body.store_id;
   console.log("Store id: ", store_id);
-  const retrieve_store = `SELECT * FROM store WHERE store_id = ?`;
+  const retrieve_store = `SELECT * FROM purchase WHERE store_id = ?`;
 
   pool.getConnection((err, connection) => {
     if (err) {
@@ -127,8 +126,7 @@ app.post('/customers', (req, res) => {
 app.post('/employees', (req, res) => {
   console.log(req); 
   const store_id = req.body.store_id;
-  console.log("Store id: ", store_id);
-  const retrieve_store = `SELECT * FROM store WHERE store_id = ?`;
+  const retrieve_store = `SELECT * FROM employee WHERE store_id = ?`;
 
   pool.getConnection((err, connection) => {
     if (err) {

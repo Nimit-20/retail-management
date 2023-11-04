@@ -1,0 +1,43 @@
+/* Add this CSS to your component's CSS file or your global stylesheet */
+
+/* Style the table */
+table {
+     width: 75%;
+     border-collapse: collapse;
+     margin: 20px 0;
+   }
+   
+   /* Style the table headers */
+   th {
+     background-color: #0074e4; /* Header background color (blue) */
+  color: #fff; /* Header text color (white) */
+     border: 1px solid #ddd;
+     padding: 8px;
+     text-align: center;
+   }
+   
+   /* Style the table rows */
+   td {
+     border: 1px solid #ddd;
+     padding: 8px;
+   }
+   
+   /* Style alternating rows for better readability */
+   tr:nth-child(even) {
+     background-color: #21468B; /* Even row background color (navy blue) */
+     color: #fff; /* Even row text color (white) */
+   }
+   
+   
+   /* Style the table header row */
+   thead {
+     font-weight: bold;
+   }
+   
+   /* Style the table container */
+   .div {
+     padding: 20px;
+     border: 1px solid #ddd;
+     border-radius: 5px;
+   }
+   
