@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,21 @@ function Login({ onLogin }) {
      
      const [loginStatus, setLoginStatus] = useState("");
     
+      // press enter to login
+      useEffect(() => { // dont have to press button now, can just hit enter
+         const listener = event => {
+           if (event.code === "Enter" || event.code === "NumpadEnter") {
+             console.log("Enter key was pressed. Run your function.");
+             event.preventDefault();
+             login()
+           }
+         };
+         document.addEventListener("keydown", listener);
+         return () => {
+           document.removeEventListener("keydown", listener);
+         };
+       } );
+
      const navigate = useNavigate();
      const login = () => {
         axios.post("http://localhost:8080/login", {

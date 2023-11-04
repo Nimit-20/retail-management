@@ -18,7 +18,6 @@ const App = () => {
      <Routes>
        <Route exact path='/' element={<Login onLogin={handleLogin}/>} />
         <Route path = '/dashboard' element ={<Dashboard isLoggedIn = {isLoggedIn} loginDetails={loginDetails}/>} />     
-       
      </Routes>
    </Router>
  );
