@@ -7,17 +7,16 @@ import { useNavigate } from 'react-router-dom'
 function Dashboard({ loginDetails, isLoggedIn }) {
      const navigate = useNavigate();
      const [openSidebarToggle, setOpenSidebarToggle] = useState(false)
-     console.log(loginDetails);
      const OpenSidebar = () => {
           setOpenSidebarToggle(!openSidebarToggle)
      }
 
      const redirectToLogin = () => {
-          alert("Redirecting to login page in 3 seconds...");
+          alert("Redirecting to login page. Click Ok");
           console.log('redirecting to login');
           setTimeout(() => {
                navigate('/')
-          }, 3000);
+          }, 500);
      }
 
      return (
@@ -32,7 +31,7 @@ function Dashboard({ loginDetails, isLoggedIn }) {
                     }
                </>) : (<>
                     <h1>You are not logged in, login here:</h1>
-                    <button onClick={redirectToLogin}>Login here</button>
+                    <button className="btn" onClick={redirectToLogin}>Login here</button>
                </>)}
           </div>
      )

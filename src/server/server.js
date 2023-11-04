@@ -24,6 +24,8 @@ const pool = mysql.createPool({
 app.use(express.json());
 
 
+
+
 app.post('/login', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -49,7 +51,172 @@ app.post('/login', (req, res) => {
         res.json({ rows: rows });
       } else {
         console.log("Invalid password");
-        res.status(401).json({ message: "Invalid username or password" });
+        res.json({ message: "Invalid username or password" });
+      }
+    })
+  }
+  )
+})
+
+app.post('/purchases', (req, res) => {
+  console.log(req); 
+  const store_id = req.body.store_id;
+  console.log("Store id: ", store_id);
+  const retrieve_store = `SELECT * FROM store WHERE store_id = ?`;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log("Error connecting to the database:", err);
+      return res.status(500).json({ error: "Database connection error" });
+    }
+    else {
+      console.log("Database connection successful");
+    }
+    
+    connection.query(retrieve_store, [store_id], (err, rows) => {
+      if (err) {
+        console.log("Error:", err);
+        res.status(500).json({ error: "Database query error" });
+      } else if (rows.length > 0) {
+        console.log("Success");
+        console.log(rows);
+        res.json({ rows: rows });
+      } else {
+        console.log("Invalid password");
+        console.log(rows);
+        console.log(err);
+      }
+    })
+  }
+  )
+})
+
+app.post('/customers', (req, res) => {
+  console.log(req); 
+  const store_id = req.body.store_id;
+  console.log("Store id: ", store_id);
+  const retrieve_store = `SELECT * FROM store WHERE store_id = ?`;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log("Error connecting to the database:", err);
+      return res.status(500).json({ error: "Database connection error" });
+    }
+    else {
+      console.log("Database connection successful");
+    }
+    
+    connection.query(retrieve_store, [store_id], (err, rows) => {
+      if (err) {
+        console.log("Error:", err);
+        res.status(500).json({ error: "Database query error" });
+      } else if (rows.length > 0) {
+        console.log("Success");
+        console.log(rows);
+        res.json({ rows: rows });
+      } else {
+        console.log("Invalid password");
+        console.log(rows);
+        console.log(err);
+      }
+    })
+  }
+  )
+})
+
+app.post('/employees', (req, res) => {
+  console.log(req); 
+  const store_id = req.body.store_id;
+  console.log("Store id: ", store_id);
+  const retrieve_store = `SELECT * FROM store WHERE store_id = ?`;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log("Error connecting to the database:", err);
+      return res.status(500).json({ error: "Database connection error" });
+    }
+    else {
+      console.log("Database connection successful");
+    }
+    
+    connection.query(retrieve_store, [store_id], (err, rows) => {
+      if (err) {
+        console.log("Error:", err);
+        res.status(500).json({ error: "Database query error" });
+      } else if (rows.length > 0) {
+        console.log("Success");
+        console.log(rows);
+        res.json({ rows: rows });
+      } else {
+        console.log("Invalid password");
+        console.log(rows);
+        console.log(err);
+      }
+    })
+  }
+  )
+})
+
+app.post('/inventory', (req, res) => {
+  console.log(req); 
+  const store_id = req.body.store_id;
+  console.log("Store id: ", store_id);
+  const retrieve_store = `SELECT * FROM store WHERE store_id = ?`;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log("Error connecting to the database:", err);
+      return res.status(500).json({ error: "Database connection error" });
+    }
+    else {
+      console.log("Database connection successful");
+    }
+    
+    connection.query(retrieve_store, [store_id], (err, rows) => {
+      if (err) {
+        console.log("Error:", err);
+        res.status(500).json({ error: "Database query error" });
+      } else if (rows.length > 0) {
+        console.log("Success");
+        console.log(rows);
+        res.json({ rows: rows });
+      } else {
+        console.log("Invalid password");
+        console.log(rows);
+        console.log(err);
+      }
+    })
+  }
+  )
+})
+
+app.post('/analytics', (req, res) => {
+  console.log(req); 
+  const store_id = req.body.store_id;
+  console.log("Store id: ", store_id);
+  const retrieve_store = `SELECT * FROM store WHERE store_id = ?`;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log("Error connecting to the database:", err);
+      return res.status(500).json({ error: "Database connection error" });
+    }
+    else {
+      console.log("Database connection successful");
+    }
+    
+    connection.query(retrieve_store, [store_id], (err, rows) => {
+      if (err) {
+        console.log("Error:", err);
+        res.status(500).json({ error: "Database query error" });
+      } else if (rows.length > 0) {
+        console.log("Success");
+        console.log(rows);
+        res.json({ rows: rows });
+      } else {
+        console.log("Invalid password");
+        console.log(rows);
+        console.log(err);
       }
     })
   }

@@ -7,8 +7,11 @@ import
  from 'recharts';
 
 function Home({loginDetails}) {
-    const store_id = loginDetails.store_id;
 
+    // TODO: write code to retrieve store information here (overview)
+    const super_id = loginDetails.super_id
+
+    
     
 
     const data = [
