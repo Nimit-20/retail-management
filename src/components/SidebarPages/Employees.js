@@ -36,12 +36,12 @@ function Employees({loginDetails}) {
             </tr>
           </thead>
           <tbody>
-            {employees.map((purchase, index) => (
+            {employees.map((employee, index) => (
               <tr key={index}>
-                <td>{purchase.employee_id}</td>
-                <td>{purchase.name}</td>
-                <td>{purchase.salary}</td>
-                <td>{purchase.date_of_joining}</td>
+                <td>{employee.employee_id}</td>
+                <td>{employee.name}</td>
+                <td>{employee.salary}</td>
+                <td>{employee.date_of_joining}</td>
               </tr>
             ))}
           </tbody>

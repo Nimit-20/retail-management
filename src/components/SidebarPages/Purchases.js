@@ -1,10 +1,12 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
 import './Purchases.css'
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 function Purchases({ loginDetails }) {
    const store_id = loginDetails.store_id;
    const [purchases, setPurchases] = useState([]);
+   const navigate = useNavigate()
    useEffect(() => {
       // Use the login details to get store details from the backend
       axios
@@ -35,6 +37,9 @@ function Purchases({ loginDetails }) {
    formatDatesInPlace(purchases);
    return (
       <div className='div'>
+         <button onClick={() => navigate('/dashboard')} className="back-button">
+        Back to Dashboard
+      </button>
          <h2>Purchases</h2>
          <table>
             <thead>

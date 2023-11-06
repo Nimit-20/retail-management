@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import React from 'react'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 function Analytics({ loginDetails }) {
   const store_id = loginDetails.store_id
   const [customers, setCustomers] = useState([]);
   const [items, setItems] = useState([]);
+  const navigate = useNavigate()
   useEffect(() => {
       // Use the login details to get store details from the backend
       axios
@@ -23,7 +25,6 @@ function Analytics({ loginDetails }) {
    }, [store_id]);
 
    useEffect(() => {
-    // Use the login details to get store details from the backend
     axios
        .post("http://localhost:8080/analytics-items", {
           store_id: store_id,
@@ -45,6 +46,9 @@ function Analytics({ loginDetails }) {
   // items sold last year that weren't sold this year ( purchases table )
   return (
     <div className='div'>
+      <button onClick={() => navigate('/dashboard')} className="back-button">
+        Back to Dashboard
+      </button>
       <h2>Top 10 Customers with most Purchases in the past month</h2>
         <table>
           <thead>

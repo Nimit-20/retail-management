@@ -148,6 +148,7 @@ app.post('/employees', (req, res) => {
                 console.log(rows);
                 console.log(err);
             }
+            connection.release(); 
         })
     }
     )
@@ -194,6 +195,7 @@ app.post('/inventory', (req, res) => {
                 console.log(rows);
                 console.log(err);
             }
+            connection.release(); 
         })
     }
     )
@@ -238,7 +240,7 @@ app.post('/salesovertime', (req, res) => { // TODO HAVDOO
                 console.log(err);
             }
         })
-
+        connection.release(); 
     }
     )
 })
@@ -294,8 +296,8 @@ app.post('/analytics-customer', (req, res) => { // TODO HAVDOO
                 console.log("Invalid password");
                 console.log(err);
             }
+            connection.release(); 
         })
-
     }
     )
 })
@@ -349,6 +351,7 @@ LIMIT 10`
             }
         })
 
+        connection.release(); 
     }
     )
 })
