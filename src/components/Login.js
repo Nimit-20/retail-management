@@ -62,7 +62,7 @@ function Login({ onLogin }) {
                      setPassword (e.target.value);
                   }}
                />
-               <button className = 'btn' onClick={login}>Login</button>
+               <button className = 'login-button' onClick={login}>Login</button>
            </div>
            <h1> {loginStatus} </h1>
         </div>

@@ -22,11 +22,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 <button className='sidebar-list-item' onClick={() => navigate('/employees')}>
                     <BsFillGrid3X3GapFill className='icon' /> Employees
                 </button>
-                <button className='sidebar-list-item' onClick={() => navigate('/customers')}>
-                    <BsPeopleFill className='icon' /> Customers
-                </button>
                 <button className='sidebar-list-item' onClick={() => navigate('/inventory')}>
                     <BsListCheck className='icon' /> Inventory
+                </button>
+                <button className='sidebar-list-item' onClick={() => navigate('/orders')}>
+                     Orders
+                </button>
+                <button className='sidebar-list-item alerts' onClick={() => navigate('/alerts')}>
+                    Alerts
                 </button>
             </div>
         </aside>

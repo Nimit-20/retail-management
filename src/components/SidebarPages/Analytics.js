@@ -4,42 +4,46 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 function Analytics({ loginDetails }) {
   const store_id = loginDetails.store_id
-  const [customers, setCustomers] = useState([]);
-  const [items, setItems] = useState([]);
+  // const [customers, setCustomers] = useState([]);
+  // const [items, setItems] = useState([]);
   const navigate = useNavigate()
-  useEffect(() => {
-      // Use the login details to get store details from the backend
-      axios
-         .post("http://localhost:8080/analytics-customer", {
-            store_id: store_id,
-         })
-         .then((response) => {
-            if (response.data.rows.length > 0) {
-               setCustomers(response.data.rows);
-            } else if (response.data.err) {
-               console.log(response.data.err);
-            } else {
-               console.log("Successfully sent req to server for " + store_id);
-            }
-         });
-   }, [store_id]);
+  const [topCustomersData, setTopCustomersData] = useState([]);
+    const [topSellingItemsData, setTopSellingItemsData] = useState([]);
+    const [employeeOfTheMonthData, setEmployeeOfTheMonthData] = useState([]);
+    const [leastSellingItemsData, setLeastSellingItemsData] = useState([]);
 
-   useEffect(() => {
-    axios
-       .post("http://localhost:8080/analytics-items", {
-          store_id: store_id,
-       })
-       .then((response) => {
-          if (response.data.rows.length > 0) {
-             setItems(response.data.rows);
-          } else if (response.data.err) {
-             console.log(response.data.err);
-          } else {
-             console.log("Successfully sent req to server for " + store_id);
-          }
-       });
- }, [store_id]);
+    useEffect(() => {
+        axios
+            .post("http://localhost:8080/analytics_data", {
+                store_id: store_id,
+            })
+            .then((response) => {
+                if (response.data) {
+                    const {
+                        topCustomers,
+                        topSellingItems,
+                        employeeOfTheMonth,
+                        leastSellingItems,
+                    } = response.data;
 
+                    // Update state with retrieved data
+                    setTopCustomersData(topCustomers);
+                    setTopSellingItemsData(topSellingItems);
+                    setEmployeeOfTheMonthData(employeeOfTheMonth);
+                    setLeastSellingItemsData(leastSellingItems);
+                } else {
+                    console.log("Error in fetching analytics data");
+                }
+            })
+            .catch((error) => {
+                console.error("Request error:", error);
+                // Handle the error as needed
+            });
+    }, [store_id]);
+    console.log(topCustomersData);
+    console.log(topSellingItemsData);
+    console.log(employeeOfTheMonthData);
+    console.log(leastSellingItemsData);
   // // top recurring customers with most purchases
   // employee of the month
   // top selling items
@@ -49,6 +53,7 @@ function Analytics({ loginDetails }) {
       <button onClick={() => navigate('/dashboard')} className="back-button">
         Back to Dashboard
       </button>
+      <br />
       <h2>Top 10 Customers with most Purchases in the past month</h2>
         <table>
           <thead>
@@ -59,7 +64,7 @@ function Analytics({ loginDetails }) {
             </tr>
           </thead>
           <tbody>
-            {customers.map((customer, index) => (
+            {topCustomersData.map((customer, index) => (
               <tr key={index}>
                 <td>{customer.customer_name}</td>
                 <td>{customer.number_of_purchases}</td>
@@ -69,8 +74,8 @@ function Analytics({ loginDetails }) {
           </tbody>
         </table>
 
-      <h2>Employee of the Month</h2>
-      <h2>Top Selling Items</h2>
+   <br />
+      <h2>Top Selling Items of the Month</h2>
       <table>
           <thead>
             <tr>
@@ -81,7 +86,7 @@ function Analytics({ loginDetails }) {
             </tr>
           </thead>
           <tbody>
-            {items.map((item, index) => (
+            {topSellingItemsData.map((item, index) => (
               <tr key={index}>
                 <td>{item.item_name}</td>
                 <td>{item.brand}</td>
@@ -92,7 +97,24 @@ function Analytics({ loginDetails }) {
           </tbody>
         </table>
       <h2>poorly selling items</h2>
-
+      <table>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Brand</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leastSellingItemsData.map((item, index) => (
+              <tr key={index}>
+                <td>{item.name}</td>
+                <td>{item.brand}</td>
+                <td>{item.type}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
     </div>
   )
 }

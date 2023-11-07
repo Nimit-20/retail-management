@@ -1,0 +1,144 @@
+/* Styles for buttons */
+.button {
+     background-color: #007bff; /* Blue background color */
+     color: #fff; /* White text color */
+     border: none;
+     padding: 10px 20px;
+     cursor: pointer;
+     border-radius: 4px;
+     font-size: 16px;
+     width: 150px;
+
+   }
+   
+   /* Hover effect for buttons */
+   button:hover {
+     background-color: #0056b3; /* Darker blue on hover */
+   }
+   
+   /* Styles for dropdowns */
+   select {
+     margin: 10px;
+     padding: 8px;
+     border: 1px solid #ccc; /* Gray border */
+     border-radius: 4px;
+     font-size: 16px;
+   }
+   
+   /* Add space between dropdown options */
+   option {
+     padding: 10px;
+   }
+   
+   /* Add a bit of shadow to dropdowns */
+   select:focus {
+     box-shadow: 0 0 5px #007bff; /* Light blue shadow on focus */
+   }
+   /* Styles for quantity input boxes */
+input[type="number"] {
+     margin: 10px;
+     padding: 8px;
+     border: 1px solid #ccc; /* Gray border */
+     border-radius: 4px;
+     font-size: 16px;
+   }
+
+   /* Styles for the quantity label */
+label {
+     font-size: 16px;
+     margin-right: 10px; /* Add some spacing between the label and the input box */
+   }
+   
+
+   
+   /* Add a bit of shadow to quantity input boxes on focus */
+   input[type="number"]:focus {
+     box-shadow: 0 0 5px #007bff; /* Light blue shadow on focus */
+   }
+
+   /* Styles for the main container
+.add-purchase {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+} */
+
+
+/* Styles for item rows */
+.item-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+} */
+
+
+/* Styles for quantity labels */
+.quantity-label {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+/* Styles for quantity input boxes */
+.quantity-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 60px;
+}
+
+/* Styles for the remove buttons */
+.remove-button {
+  width: 100px;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+/* Hover effect for remove buttons */
+.remove-button:hover {
+  background-color: #ff3333;
+}
+
+/* Styles for the "Add Item" button */
+.add-item-button {
+  width: 200px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Styles for the "Invalid Purchase" message */
+.invalid-purchase {
+  color: #ff0000;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+/* Styles for the "Total Amount" text */
+.total-amount {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+/* Styles for the "Submit Purchase" button */
+.submit-button {
+  width: 200px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
