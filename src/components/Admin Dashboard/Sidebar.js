@@ -1,9 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Sidebar.css'
-import {
-BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill,
-BsListCheck, BsMenuButtonWideFill
+import { BsPeopleFill,
+BsListCheck, BsCurrencyDollar, BsCalculator, BsList, BsExclamationCircle, 
 }
     from 'react-icons/bs'
 
@@ -14,23 +13,27 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             {/* //TODO: Finish the links */}
             <div className='sidebar-list'>
                 <button className='sidebar-list-item' onClick={() => navigate('/analytics')}>
-                    <BsGrid1X2Fill className='icon' /> Analytics
+                    <BsCalculator className='icon' /> Analytics
                 </button>
                 <button className='sidebar-list-item' onClick={() => navigate('/purchases')}>
-                    <BsFillArchiveFill className='icon' /> Purchases
+                    <BsCurrencyDollar className='icon' /> Purchases
                 </button>
                 <button className='sidebar-list-item' onClick={() => navigate('/employees')}>
-                    <BsFillGrid3X3GapFill className='icon' /> Employees
+                    <BsPeopleFill className='icon' /> Employees
                 </button>
                 <button className='sidebar-list-item' onClick={() => navigate('/inventory')}>
                     <BsListCheck className='icon' /> Inventory
                 </button>
                 <button className='sidebar-list-item' onClick={() => navigate('/orders')}>
-                     Orders
+                    <BsList className = 'icon'/> Orders
                 </button>
                 <button className='sidebar-list-item alerts' onClick={() => navigate('/alerts')}>
-                    Alerts
+                    <BsExclamationCircle className = 'icon'/> Alerts
                 </button>
+
+                {/* <button className='sidebar-list-item' onClick={() => navigate('/add-purchase')}>
+                    <BsBagPlusFill/> Add A Purchase
+                </button> */}
             </div>
         </aside>
     )

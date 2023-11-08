@@ -40,11 +40,12 @@ function Purchases({ loginDetails }) {
          <button onClick={() => navigate('/dashboard')} className="back-button">
         Back to Dashboard
       </button>
-         <h2>Purchases</h2>
+         <h2>Most Recent Purchases</h2>
          <table>
             <thead>
                <tr>
                   <th>Purchase ID</th>
+                  <th>Customer Name</th>
                   <th>Amount</th>
                   <th>Date</th>
                   <th>Time</th>
@@ -54,6 +55,7 @@ function Purchases({ loginDetails }) {
                {purchases.map((purchase, index) => (
                   <tr key={index}>
                      <td>{purchase.purchase_id}</td>
+                     <td>{purchase.customer_name}</td>
                      <td>{purchase.amount}</td>
                      <td>{purchase.date}</td>
                      <td>{purchase.time}</td>

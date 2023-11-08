@@ -2,8 +2,9 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import "./Inventory.css"
+import { useNavigate } from 'react-router-dom';
 function Inventory({loginDetails}) { //TODO: retrieve all products and their quantities from the database
-  
+    const navigate = useNavigate()
      const store_id = loginDetails.store_id;
      const [inventory, setInventory] = useState([]);
 
@@ -27,6 +28,10 @@ function Inventory({loginDetails}) { //TODO: retrieve all products and their qua
   
      return (
 <div className='div'>
+
+      <button onClick={() => navigate('/dashboard')} className="back-button">
+        Back to Dashboard
+      </button>
       <h2>Inventory</h2>
         <table>
           <thead>
@@ -40,7 +45,7 @@ function Inventory({loginDetails}) { //TODO: retrieve all products and their qua
             {inventory.map((item, index) => (
               <tr key={index}>
                 <td>{item.item_id}</td>
-                <td>{item.name}</td>
+                <td>{item.name} - {item.brand}</td>
                 <td>{item.total_quantity}</td>
               </tr>
             ))}

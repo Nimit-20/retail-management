@@ -6,7 +6,7 @@ import './AddPurchase.css'
 function AddPurchase() {
   const [storeOptions, setStoreOptions] = useState([]);
   const [itemOptions, setItemOptions] = useState([]);
-  const [selectedStore, setSelectedStore] = useState('');
+  const [selectedStore, setSelectedStore] = useState(0);
   const [purchaseItems, setPurchaseItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
 
@@ -40,8 +40,8 @@ function AddPurchase() {
   useEffect(() => {
     // Calculate the total amount based on the selected items and quantities
     const calculatedTotalAmount = purchaseItems.reduce((total, item) => {
-      if (item.item && item.quantity) {
-        const selectedItem = itemOptions.find((option) => option.item_id === item.item);
+      if (item.item_id && item.quantity) {
+        const selectedItem = itemOptions.find((option) => option.item_id === item.item_id);
         if (selectedItem) {
           const itemTotal = selectedItem.price * item.quantity;
           console.log(`Item: ${selectedItem.item_id}, Price: ${selectedItem.price}, Quantity: ${item.quantity}, Total: ${itemTotal}`);
@@ -56,8 +56,6 @@ function AddPurchase() {
     setTotalAmount(calculatedTotalAmount);
   }, [purchaseItems, itemOptions]);
   
-  // Handle purchase submission
-// Handle purchase submission
 const handlePurchaseSubmit = () => {
   // Prepare the data to be sent to the server
   const purchaseData = {
@@ -68,10 +66,10 @@ const handlePurchaseSubmit = () => {
     store_id: selectedStore,
   };
 
-  const purchaseItemsData = purchaseItems.map((item) => ({
-    item_id: item.item,
-    quantity: item.quantity,
-  })
+  const purchaseItemsData = purchaseItems.map((item) => ([
+    item.item_id,
+    item.quantity,
+  ])
   )
 
   // Send the POST request to your backend to create the purchase
@@ -111,7 +109,6 @@ const handlePurchaseSubmit = () => {
     updatedItems[index][field] = value;
     setPurchaseItems(updatedItems);
   };
-
   return (
      <div>
       <h1>Add Purchase</h1>
@@ -130,7 +127,7 @@ const handlePurchaseSubmit = () => {
     <select
       id={`item-${index}`}
       value={item.item_name}
-      onChange={(e) => updateRow(index, 'item', e.target.value)}
+      onChange={(e) => updateRow(index, 'item_id', e.target.value)}
       className="item-select"
     >
       <option value="">Select Item</option>

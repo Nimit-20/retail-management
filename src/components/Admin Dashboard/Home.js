@@ -1,28 +1,57 @@
-import React from 'react'
-import 
-{ BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill}
- from 'react-icons/bs'
- import 
- { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } 
- from 'recharts';
+import React, { useState, useEffect } from 'react';
 import SalesOverTimeChart from './SalesOverTimeChart';
+import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill } from 'react-icons/bs';
+import axios from 'axios'; // Import Axios
 
-function Home({loginDetails}) {
+function Home({ loginDetails }) {
+  const [productCount, setProductCount] = useState(0);
+  const [employeeCount, setEmployeeCount] = useState(0);
+  const [alertCount, setAlertCount] = useState(0);
+
+  const store_id = loginDetails.store_id;
+ 
+  useEffect(() => {
+    // Fetch order information for the current store
+    axios
+      .get(`http://localhost:8080/products/count?store_id=${store_id}`) // Assuming you have an endpoint to fetch orders
+      .then((response) => {
+        setProductCount(response.data);
+      });
+  }, [store_id]);
+  useEffect(() => {
+    // Fetch order information for the current store
+    axios
+      .get(`http://localhost:8080/employees/count?store_id=${store_id}`) // Assuming you have an endpoint to fetch orders
+      .then((response) => {
+        setEmployeeCount(response.data);
+      });
+  }, [store_id]);
+
+  useEffect(() => {
+    // Fetch order information for the current store
+    axios
+      .get(`http://localhost:8080/alerts/count?store_id=${store_id}`) // Assuming you have an endpoint to fetch orders
+      .then((response) => {
+        setAlertCount(response.data);
+      });
+  }, [store_id]);
+  console.log(alertCount[0].count);
 
   return (
     <main className='main-container'>
         <div className='main-title'>
             <h2>Welcome, {loginDetails.name}!</h2>
             <h3>Store ID: {loginDetails.store_id}</h3>
+            <h3>Location: {loginDetails.city}, {loginDetails.state}, {loginDetails.country}</h3>
         </div>
 
         <div className='main-cards'>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>PRODUCTS SOLD</h3>
+                    <h3>PRODUCTS AVAILABLE</h3>
                     <BsFillArchiveFill className='card_icon'/>
                 </div>
-                <h1>300</h1>
+                <h1>{productCount[0].count}</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
@@ -33,23 +62,23 @@ function Home({loginDetails}) {
             </div>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>CUSTOMERS </h3>
+                    <h3>EMPLOYEES </h3>
                     <BsPeopleFill className='card_icon'/>
                 </div>
-                <h1>33</h1>
+                <h1>{employeeCount[0].count}</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
                     <h3>ALERTS</h3>
                     <BsFillBellFill className='card_icon'/>
                 </div>
-                <h1>42</h1>
+                <h1>{alertCount[0].count}</h1>
             </div>
         </div>
 
         <SalesOverTimeChart loginDetails={loginDetails}/>
     </main>
-  )
+  );
 }
 
-export default Home
+export default Home;

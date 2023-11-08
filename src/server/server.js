@@ -27,8 +27,11 @@ app.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    const retrieve = `SELECT * FROM supervisor WHERE username = ? AND password = ?`
-
+    const retrieve = `SELECT s.*, st.city, st.state, st.country
+    FROM supervisor AS s
+    JOIN store AS st ON s.store_id = st.store_id
+    WHERE s.username = ? AND s.password = ?;`
+    
     pool.getConnection((err, connection) => {
         if (err) {
             console.log("Error connecting to the database:", err);
@@ -58,7 +61,19 @@ app.post('/login', (req, res) => {
 app.post('/purchases', (req, res) => {
     const store_id = req.body.store_id;
     console.log("Store id: ", store_id);
-    const retrieve_store = `SELECT * FROM purchase WHERE store_id = ? ORDER BY date desc, time desc`;
+    const retrieve_store = `SELECT
+        p.*,
+        c.customer_name
+    FROM
+        purchase AS p
+    JOIN
+        customer AS c ON p.customer_id = c.customer_id
+    WHERE
+        p.store_id = ?
+    ORDER BY
+        p.date DESC, p.time DESC
+    LIMIT 5;
+`;
 
     pool.getConnection((err, connection) => {
         if (err) {
@@ -120,12 +135,11 @@ app.post('/employees', (req, res) => {
 })
 
 app.post('/inventory', (req, res) => {
-    console.log(req);
     const store_id = req.body.store_id;
-    console.log("Store id inventory: ", store_id);
     const retrieve_store = `SELECT
        items.item_id,
        items.name,
+       items.brand,
        store_id,
        SUM(quantity) AS total_quantity
    FROM
@@ -166,7 +180,7 @@ app.post('/inventory', (req, res) => {
     )
 })
 
-app.post('/salesovertime', (req, res) => { // TODO HAVDOO
+app.post('/salesovertime', (req, res) => { 
     const store_id = req.body.store_id;
     const sales_over_time = `SELECT 
                 date,
@@ -218,21 +232,23 @@ app.post('/salesovertime', (req, res) => { // TODO HAVDOO
 app.post('/analytics_data', (req, res) => {
     const store_id = req.body.store_id;
 
-    // Define SQL queries for each type of analytics data
-    const top_customers_query = `SELECT c.customer_name,
-        COUNT(p.purchase_id) AS number_of_purchases,
-        SUM(p.amount) AS total_amount_spent
+    const top_customers_query = `
+        SELECT 
+            c.customer_name,
+            COUNT(p.purchase_id) AS number_of_purchases,
+            SUM(p.amount) AS total_amount_spent
         FROM
             customer AS c
         JOIN
             purchase AS p ON c.customer_id = p.customer_id AND p.store_id = ?
         WHERE
-            p.date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+            p.date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
         GROUP BY
             c.customer_name
         ORDER BY
             number_of_purchases DESC
-        LIMIT 10`;
+        LIMIT 5`;
+        
     const top_selling_items_query = `SELECT
             i.name AS item_name,
             i.brand,
@@ -253,24 +269,28 @@ app.post('/analytics_data', (req, res) => {
             i.name, i.brand, i.type
         ORDER BY
             total_quantity_sold DESC
-        LIMIT 10`;
-    const items_unsold_last_year = `
-SELECT i.item_id, i.name, i.brand, i.type
-FROM purchase_items AS pi
-JOIN purchase AS p ON pi.purchase_id = p.purchase_id
-JOIN items AS i ON pi.item_id = i.item_id
-WHERE EXTRACT(YEAR FROM p.date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1
-AND pi.quantity < 1
+        LIMIT 5`;
+       
+        
+    const items_unsold_this_year = `
+        SELECT i.item_id, i.name, i.brand, i.type
+        FROM purchase_items AS pi
+        JOIN purchase AS p ON pi.purchase_id = p.purchase_id
+        JOIN items AS i ON pi.item_id = i.item_id
+        WHERE EXTRACT(YEAR FROM p.date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1
+        AND p.store_id = ?
+        AND pi.quantity > 3
 
-UNION
+        UNION
 
-SELECT i.item_id, i.name, i.brand, i.type
-FROM purchase_items AS pi
-JOIN purchase AS p ON pi.purchase_id = p.purchase_id
-JOIN items AS i ON pi.item_id = i.item_id
-WHERE EXTRACT(YEAR FROM p.date) = EXTRACT(YEAR FROM CURRENT_DATE)
-AND pi.quantity >= 1;
-        `;
+        SELECT i.item_id, i.name, i.brand, i.type
+        FROM purchase_items AS pi
+        JOIN purchase AS p ON pi.purchase_id = p.purchase_id
+        JOIN items AS i ON pi.item_id = i.item_id
+        WHERE EXTRACT(YEAR FROM p.date) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND p.store_id = ?
+        AND pi.quantity <= 3;
+                `;
 
     pool.getConnection((err, connection) => {
         if (err) {
@@ -292,7 +312,7 @@ AND pi.quantity >= 1;
                     console.log("Error (top selling items query):", err2);
                     return res.status(500).json({ error: "Top selling items query error" });
                 }
-                connection.query(items_unsold_last_year, [store_id], (err4, rows4) => {
+                connection.query(items_unsold_this_year, [store_id, store_id], (err4, rows4) => {
                     if (err4) {
                         console.log("Error (least selling items query):", err4);
                         return res.status(500).json({ error: "Least selling items query error" });
@@ -377,6 +397,44 @@ app.get('/items-by-store', (req, res) => {
     });
 });
 
+app.post('/create-purchase', (req, res) => {
+    const purchase = req.body.purchase
+    const purchaseItems = req.body.purchaseItems
+  console.log("purchase: " + purchase, "purchaseItems: " + purchaseItems);
+    // Insert data into the purchase table
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database connection error' });
+      }
+  
+      connection.query('INSERT INTO purchase VALUES ?', purchase, (err, result) => {
+        if (err) {
+          connection.release();
+          return res.status(500).json({ error: 'Failed to create purchase' });
+        }
+  
+        // Insert data into the purchase_items table
+        const purchaseId = result.insertId;
+        const purchaseItemsData = purchaseItems.map((item) => ([
+            purchaseId,
+          item.item_id,
+          item.quantity,
+        ]));
+  
+        connection.query('INSERT INTO purchase_items SET ?', purchaseItemsData, (err) => {
+          connection.release();
+          if (err) {
+            return res.status(500).json({ error: 'Failed to create purchase items' });
+          }
+  
+          // Success response
+          res.json({ message: 'Purchase created successfully' });
+        });
+      });
+    });
+  });
+  
+
 app.post('/alerts', (req, res) => {
     const store_id = req.body.store_id;
 
@@ -423,7 +481,6 @@ app.post('/order-create', (req, res) => {
     CALL UpdateStoreItemsQuantity(?, ?, ?);
     ;
     `
-
     pool.getConnection((err, connection) => {
         if (err) {
             console.log("Error connecting to the database:", err);
@@ -451,14 +508,14 @@ app.post('/order-create', (req, res) => {
     )
 })
 
-// API endpoint to fetch orders for a specific store
 app.get('/orders', (req, res) => {
     const store_id = req.query.store_id; // Get the store_id from the query parameter
 
     const query = `
-      SELECT order_id, item_id, quantity, date
-      FROM orders
-      WHERE store_id = ?;
+    SELECT o.order_id, o.item_id, i.name, i.brand, o.quantity, o.date
+    FROM orders o
+    JOIN items i ON o.item_id = i.item_id
+    WHERE o.store_id = ?;    
     `;
     pool.getConnection((err, connection) => {
         if (err) {
@@ -482,6 +539,88 @@ app.get('/orders', (req, res) => {
 }
 )
 
+app.get('/products/count', (req, res) => {
+    const store_id = req.query.store_id; // Get the store_id from the query parameter
+
+    const query = `
+    SELECT COUNT(*) AS count FROM store_items WHERE store_id = ?;    
+    `;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.log("Error connecting to the database:", err);
+            return res.status(500).json({ error: "Database connection error" });
+        }
+        else {
+            console.log("Database connection successful - products/count");
+        }
+
+        connection.query(query, [store_id], (err, results) => {
+            if (err) {
+                console.error('Error executing query: ' + err);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                console.log(results);
+                res.status(200).json(results);
+            }
+        });
+        connection.release()
+    });
+  });
+  
+  app.get('/employees/count', (req, res) => {
+    const store_id = req.query.store_id; // Get the store_id from the query parameter
+
+    const query = `
+    SELECT COUNT(*) AS count FROM employee WHERE store_id = ?;    
+    `;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.log("Error connecting to the database:", err);
+            return res.status(500).json({ error: "Database connection error" });
+        }
+        else {
+            console.log("Database connection successful - employee/count");
+        }
+
+        connection.query(query, [store_id], (err, results) => {
+            if (err) {
+                console.error('Error executing query: ' + err);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                console.log(results);
+                res.status(200).json(results);
+            }
+        });
+        connection.release()
+  });
+})
+  app.get('/alerts/count', (req, res) => {
+    const store_id = req.query.store_id; // Get the store_id from the query parameter
+
+    const query = `
+    SELECT COUNT(*) AS count FROM alerts WHERE store_id = ?;    
+    `;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.log("Error connecting to the database:", err);
+            return res.status(500).json({ error: "Database connection error" });
+        }
+        else {
+            console.log("Database connection successful - alerts/count");
+        }
+
+        connection.query(query, [store_id], (err, results) => {
+            if (err) {
+                console.error('Error executing query: ' + err);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                console.log(results);
+                res.status(200).json(results);
+            }
+        });
+        connection.release()
+  });
+  })
 app.listen(8080, () => {
     console.log("Server is running on port 8080");
 });

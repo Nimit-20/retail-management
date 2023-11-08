@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react';
 import axios from 'axios';
+import './Orders.css'
+import { useNavigate } from 'react-router-dom';
 function Orders({loginDetails}) {
   const store_id = loginDetails.store_id;
   const [ItemID, setItemID] = useState(0);
   const [Quantity, setQuantity] = useState(1);
   const [Items, setItems] = useState([]);
   const [orders, setOrders] = useState([]);
+const navigate = useNavigate()
   useEffect(() => {
     if (store_id) {
      console.log("selected store is: " + store_id);
@@ -51,7 +54,10 @@ function Orders({loginDetails}) {
   formatDatesInPlace(orders);
 
   return (
-    <div>
+    <div className='div'>
+       <button onClick={() => navigate('/dashboard')} className="back-button">
+        Back to Dashboard
+      </button>
       <h2>Orders</h2>
       <div>
         <label htmlFor="item-select">Select an item:</label>
@@ -85,6 +91,7 @@ function Orders({loginDetails}) {
           <tr>
             <th>Order ID</th>
             <th>Item ID</th>
+            <th>Item Name</th>
             <th>Quantity</th>
             <th>Date</th>
           </tr>
@@ -94,6 +101,7 @@ function Orders({loginDetails}) {
             <tr key={order.order_id}>
               <td>{order.order_id}</td>
               <td>{order.item_id}</td>
+              <td>{order.name} - {order.brand}</td>
               <td>{order.quantity}</td>
               <td>{order.date}</td>
             </tr>

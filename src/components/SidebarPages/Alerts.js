@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './Alerts.css'
 function Alerts({loginDetails}) {
   const [alerts, setAlerts] = useState([]);
   const store_id = loginDetails.store_id;
@@ -39,16 +40,16 @@ function Alerts({loginDetails}) {
          <h2>Alerts</h2>
          <table>
             <thead>
-               <tr>
-                  <th>Alert ID</th>
-                  <th>Date</th>
-                  <th>Item ID</th>
-                  <th>Item Name</th>
+               <tr className='alerts-tr'>
+                  <th className='alerts-th'>Alert ID</th>
+                  <th className='alerts-th'>Date</th>
+                  <th className='alerts-th'>Item ID</th>
+                  <th className='alerts-th'>Item Name</th>
                </tr>
             </thead>
             <tbody>
                {alerts.map((alert, index) => (
-                  <tr key={index}>
+                  <tr className='alerts-tr' key={index}>
                      <td>{alert.alert_id}</td>
                      <td>{alert.date}</td>
                      <td>{alert.item_id}</td>
@@ -59,7 +60,6 @@ function Alerts({loginDetails}) {
          </table>
       </div>
    );
-
 }
 
 export default Alerts;

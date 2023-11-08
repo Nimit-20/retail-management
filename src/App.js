@@ -10,6 +10,7 @@ import Inventory from './components/SidebarPages/Inventory';
 import Employees from './components/SidebarPages/Employees';
 import Orders from './components/SidebarPages/Orders';
 import Alerts from './components/SidebarPages/Alerts';
+import AddPurchase from './components/SidebarPages/AddPurchase';
 
 
 const App = () => {
@@ -29,7 +30,8 @@ const App = () => {
         <Route path = '/employees' element ={<Employees loginDetails={loginDetails}/>}/>  
         <Route path = '/inventory' element ={<Inventory loginDetails={loginDetails}/>}/>
         <Route path = '/orders' element ={<Orders loginDetails={loginDetails}/>}/>     
-        <Route path = '/alerts' element ={<Alerts loginDetails={loginDetails}/>}/>     
+        <Route path = '/alerts' element ={<Alerts loginDetails={loginDetails}/>}/>  
+        <Route path = '/add-purchase' element ={<AddPurchase/>}/>  
 
      </Routes>
    </Router>

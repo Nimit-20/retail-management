@@ -54,7 +54,7 @@ function Analytics({ loginDetails }) {
         Back to Dashboard
       </button>
       <br />
-      <h2>Top 10 Customers with most Purchases in the past month</h2>
+      <h2>Top 5 Customers with Most Purchases in the last 6 months</h2>
         <table>
           <thead>
             <tr>
@@ -75,7 +75,7 @@ function Analytics({ loginDetails }) {
         </table>
 
    <br />
-      <h2>Top Selling Items of the Month</h2>
+      <h2>Top 5 Items Sold in the past Month</h2>
       <table>
           <thead>
             <tr>
@@ -96,7 +96,8 @@ function Analytics({ loginDetails }) {
             ))}
           </tbody>
         </table>
-      <h2>poorly selling items</h2>
+        <br />
+      <h2>Items sold that sold well last year, but have not been bought this year</h2>
       <table>
           <thead>
             <tr>
