@@ -11,32 +11,32 @@ function Home({ loginDetails }) {
   const store_id = loginDetails.store_id;
  
   useEffect(() => {
-    // Fetch order information for the current store
+    
     axios
-      .get(`http://localhost:8080/products/count?store_id=${store_id}`) // Assuming you have an endpoint to fetch orders
+      .get(`http://localhost:8080/alerts/count?store_id=${store_id}`)
       .then((response) => {
-        setProductCount(response.data);
+        setAlertCount(response.data[0].count); // Set alertCount to the count value
       });
-  }, [store_id]);
+}, [store_id]);
+
   useEffect(() => {
     // Fetch order information for the current store
     axios
       .get(`http://localhost:8080/employees/count?store_id=${store_id}`) // Assuming you have an endpoint to fetch orders
       .then((response) => {
-        setEmployeeCount(response.data);
+        setEmployeeCount(response.data[0].count);
       });
   }, [store_id]);
 
   useEffect(() => {
     // Fetch order information for the current store
     axios
-      .get(`http://localhost:8080/alerts/count?store_id=${store_id}`) // Assuming you have an endpoint to fetch orders
+      .get(`http://localhost:8080/products/count?store_id=${store_id}`) // Assuming you have an endpoint to fetch orders
       .then((response) => {
-        setAlertCount(response.data);
+        setProductCount(response.data[0].count);
       });
   }, [store_id]);
-  console.log(alertCount[0].count);
-
+  
   return (
     <main className='main-container'>
         <div className='main-title'>
@@ -51,7 +51,7 @@ function Home({ loginDetails }) {
                     <h3>PRODUCTS AVAILABLE</h3>
                     <BsFillArchiveFill className='card_icon'/>
                 </div>
-                <h1>{productCount[0].count}</h1>
+                <h1>{productCount}</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
@@ -65,20 +65,20 @@ function Home({ loginDetails }) {
                     <h3>EMPLOYEES </h3>
                     <BsPeopleFill className='card_icon'/>
                 </div>
-                <h1>{employeeCount[0].count}</h1>
+                <h1>{employeeCount}</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
                     <h3>ALERTS</h3>
                     <BsFillBellFill className='card_icon'/>
                 </div>
-                <h1>{alertCount[0].count}</h1>
+                <h1>{alertCount}</h1>
             </div>
         </div>
 
         <SalesOverTimeChart loginDetails={loginDetails}/>
     </main>
-  );
+);
 }
 
 export default Home;
