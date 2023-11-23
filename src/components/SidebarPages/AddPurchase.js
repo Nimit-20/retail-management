@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddPurchase.css'
+import { useNavigate } from 'react-router-dom';
 function AddPurchase() {
+  const navigate = useNavigate()
   const [storeOptions, setStoreOptions] = useState([]);
   const [itemOptions, setItemOptions] = useState([]);
   const [selectedStore, setSelectedStore] = useState(0);
@@ -19,7 +21,7 @@ function AddPurchase() {
       .catch((error) => {
         console.error('Error fetching store_ids:', error);
       });
-  }, []);
+  }, []); 
 
   // Fetch available item_id values based on the selected store
   useEffect(() => {
@@ -38,7 +40,6 @@ function AddPurchase() {
 
 
   useEffect(() => {
-    // Calculate the total amount based on the selected items and quantities
     const calculatedTotalAmount = purchaseItems.reduce((total, item) => {
       if (item.item_id && item.quantity) {
         const selectedItem = itemOptions.find((option) => option.item_id === item.item_id);
@@ -52,25 +53,25 @@ function AddPurchase() {
     }, 0);
     console.log("Total Amount: " + calculatedTotalAmount);
   
-    // Set the calculated total amount in the state
-    setTotalAmount(calculatedTotalAmount);
+    setTotalAmount(100);
   }, [purchaseItems, itemOptions]);
   
 const handlePurchaseSubmit = () => {
   // Prepare the data to be sent to the server
   const purchaseData = {
     amount: totalAmount,
-    date: new Date().toISOString().split('T')[0], // Current date
-    time: new Date().toTimeString().split(' ')[0], // Current time
-    customer_id: 1, // Replace with the actual customer ID
+    date: new Date().toISOString().split('T')[0], 
+    time: new Date().toTimeString().split(' ')[0], 
+    customer_id: 1, 
     store_id: selectedStore,
   };
 
-  const purchaseItemsData = purchaseItems.map((item) => ([
-    item.item_id,
-    item.quantity,
-  ])
+  const purchaseItemsData = purchaseItems.map((item) => ({
+    item_id: parseInt(item.item_id),
+    quantity: item.quantity,
+})
   )
+  console.log(purchaseItemsData);
 
   // Send the POST request to your backend to create the purchase
   axios
@@ -79,38 +80,36 @@ const handlePurchaseSubmit = () => {
       purchaseItems: purchaseItemsData,
     })
     .then((response) => {
-      // Handle success, e.g., clear purchaseItems and show a success message
       console.log('Purchase created successfully:', response.data);
       setPurchaseItems([]);
-      // You can add additional logic here, such as showing a success message.
     })
     .catch((error) => {
-      // Handle errors, e.g., show an error message
+      console.log(error);
       console.error('Error creating purchase:', error);
-      // You can add additional error handling logic here.
+
     });
 };
 
-  // Add a new row for selecting items and quantities
   const addRow = () => {
     setPurchaseItems([...purchaseItems, { item: '', quantity: 1 }]);
   };
 
-  // Remove a row
   const removeRow = (index) => {
     const updatedItems = [...purchaseItems];
     updatedItems.splice(index, 1);
     setPurchaseItems(updatedItems);
   };
 
-  // Update the item and quantity in the state
   const updateRow = (index, field, value) => {
     const updatedItems = [...purchaseItems];
     updatedItems[index][field] = value;
     setPurchaseItems(updatedItems);
   };
   return (
-     <div>
+     <div className='div'>
+      <button onClick={() => navigate('/dashboard')} className="back-button">
+        Back to Dashboard
+      </button>
       <h1>Add Purchase</h1>
       <select value={selectedStore} onChange={(e) => setSelectedStore(e.target.value)}>
         <option value="">Select Store</option>
@@ -150,11 +149,8 @@ const handlePurchaseSubmit = () => {
     </button>
   </div>
 ))}
-
       <button className = 'add-item-button' onClick={addRow}>Add Item</button>
-
       <div className='total-amount'>Total Amount: {totalAmount}</div>
-
       <button className='submit-button' onClick={handlePurchaseSubmit}>Submit Purchase</button>
     </div>
    

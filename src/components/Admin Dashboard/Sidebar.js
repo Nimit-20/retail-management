@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Sidebar.css'
 import { BsPeopleFill,
-BsListCheck, BsCurrencyDollar, BsCalculator, BsList, BsExclamationCircle, 
+BsListCheck, BsCurrencyDollar, BsCalculator, BsList, BsExclamationCircle, BsBagPlusFill 
 }
     from 'react-icons/bs'
 
@@ -30,10 +30,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 <button className='sidebar-list-item alerts' onClick={() => navigate('/alerts')}>
                     <BsExclamationCircle className = 'icon'/> Alerts
                 </button>
-
-                {/* <button className='sidebar-list-item' onClick={() => navigate('/add-purchase')}>
+                <button className='sidebar-list-item' onClick={() => navigate('/add-purchase')}>
                     <BsBagPlusFill/> Add A Purchase
-                </button> */}
+                </button>
             </div>
         </aside>
     )

@@ -8,6 +8,7 @@ const corsOptions = {
     credentials: true, //access-control-allow-credentials:true
     optionSuccessStatus: 200,
 };
+
 require('dotenv').config()
 app.use(cors(corsOptions));
 
@@ -93,10 +94,9 @@ app.post('/purchases', (req, res) => {
                 console.log(rows);
                 res.json({ rows: rows });
             } else {
-                console.log("Invalid password");
                 console.log(rows);
-                console.log(err);
             }
+            connection.release();
         })
     }
     )
@@ -126,6 +126,37 @@ app.post('/employees', (req, res) => {
             } else {
                 console.log("Invalid password");
                 console.log(rows);
+                console.log(err);
+            }
+            connection.release();
+        })
+    }
+    )
+})
+
+app.post('/fire-employee', (req, res) => {
+    const store_id = req.body.store_id;
+    const employee_id = req.body.employee_id;
+    const fire_employee = `DELETE FROM employee WHERE store_id = ? AND employee_id = ?`;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.log("Error connecting to the database:", err);
+            return res.status(500).json({ error: "Database connection error" });
+        }
+        else {
+            console.log("Database connection successful");
+        }
+
+        connection.query(fire_employee, [store_id, employee_id], (err, rows) => {
+            if (err) {
+                console.log("Error:", err);
+                res.status(500).json({ error: "Database query error" });
+            } else if (rows.length > 0) {
+                console.log("Success");
+                res.json({ rows: rows });
+
+            } else {
                 console.log(err);
             }
             connection.release();
@@ -220,16 +251,8 @@ app.post('/salesovertime', (req, res) => {
     )
 })
 
-// aggregate functions - 1
-// set operations
-// join 
-// procedure
-// trigger
-// create alerts table, can create a trigger to add an alert for low inventory
-// TODO: 
-//! make function
-
-app.post('/analytics_data', (req, res) => {
+// nested query: 
+app.post('/analytics_data', (req, res) => {             
     const store_id = req.body.store_id;
 
     const top_customers_query = `
@@ -271,13 +294,13 @@ app.post('/analytics_data', (req, res) => {
             total_quantity_sold DESC
         LIMIT 5`;
        
-        
+
     const items_unsold_this_year = `
         SELECT i.item_id, i.name, i.brand, i.type
         FROM purchase_items AS pi
         JOIN purchase AS p ON pi.purchase_id = p.purchase_id
         JOIN items AS i ON pi.item_id = i.item_id
-        WHERE EXTRACT(YEAR FROM p.date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1
+        WHERE CalculateYearDifference(p.date, CURRENT_DATE) = -1
         AND p.store_id = ?
         AND pi.quantity > 3
 
@@ -287,7 +310,7 @@ app.post('/analytics_data', (req, res) => {
         FROM purchase_items AS pi
         JOIN purchase AS p ON pi.purchase_id = p.purchase_id
         JOIN items AS i ON pi.item_id = i.item_id
-        WHERE EXTRACT(YEAR FROM p.date) = EXTRACT(YEAR FROM CURRENT_DATE)
+        WHERE CalculateYearDifference(p.date, CURRENT_DATE) = 0
         AND p.store_id = ?
         AND pi.quantity <= 3;
                 `;
@@ -333,7 +356,6 @@ app.post('/analytics_data', (req, res) => {
     });
 });
 
-
 app.get('/store-ids', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
@@ -353,9 +375,9 @@ app.get('/store-ids', (req, res) => {
                 const storeIds = results.map((result) => result.store_id);
                 res.json({ storeIds });
             }
+            connection.release();
         });
 
-        connection.release();
     });
 });
 
@@ -395,22 +417,24 @@ app.get('/items-by-store', (req, res) => {
             connection.release();
         });
     });
-});
+}); 
 
 app.post('/create-purchase', (req, res) => {
     const purchase = req.body.purchase
     const purchaseItems = req.body.purchaseItems
-  console.log("purchase: " + purchase, "purchaseItems: " + purchaseItems);
+    console.log("purchase: " + purchase, "purchaseItems: " + purchaseItems);
     // Insert data into the purchase table
     pool.getConnection((err, connection) => {
       if (err) {
         return res.status(500).json({ error: 'Database connection error' });
       }
-  
-      connection.query('INSERT INTO purchase VALUES ?', purchase, (err, result) => {
+
+      connection.query('INSERT INTO purchase SET ?', [purchase], (err, result) => {
         if (err) {
-          connection.release();
-          return res.status(500).json({ error: 'Failed to create purchase' });
+            console.log(err);
+
+            connection.release();
+          return res.status(500).json(err);
         }
   
         // Insert data into the purchase_items table
@@ -420,20 +444,20 @@ app.post('/create-purchase', (req, res) => {
           item.item_id,
           item.quantity,
         ]));
-  
-        connection.query('INSERT INTO purchase_items SET ?', purchaseItemsData, (err) => {
-          connection.release();
-          if (err) {
-            return res.status(500).json({ error: 'Failed to create purchase items' });
-          }
-  
-          // Success response
-          res.json({ message: 'Purchase created successfully' });
-        });
+
+        connection.query('INSERT INTO purchase_items (purchase_id, item_id, quantity) VALUES ?', [purchaseItemsData], (err) => {
+            if (err) {
+              connection.release();
+              console.log(err);
+              return res.status(500).json(err);
+            }
+            // Success response
+            res.json({ message: 'Purchase created successfully' });
+            connection.release()
+          });
       });
     });
   });
-  
 
 app.post('/alerts', (req, res) => {
     const store_id = req.body.store_id;
@@ -467,8 +491,8 @@ app.post('/alerts', (req, res) => {
             } else {
                 console.log(err);
             }
+            connection.release();
         })
-        connection.release();
     }
     )
 })
@@ -496,7 +520,6 @@ app.post('/order-create', (req, res) => {
                 res.status(500).json({ error: "Database query error" });
             } else if (rows.length > 0) {
                 console.log("Success");
-                console.log(rows);
                 res.json({ rows: rows });
 
             } else {
@@ -512,10 +535,10 @@ app.get('/orders', (req, res) => {
     const store_id = req.query.store_id; // Get the store_id from the query parameter
 
     const query = `
-    SELECT o.order_id, o.item_id, i.name, i.brand, o.quantity, o.date
-    FROM orders o
-    JOIN items i ON o.item_id = i.item_id
-    WHERE o.store_id = ?;    
+        SELECT o.order_id, o.item_id, i.name, i.brand, o.quantity, o.date
+        FROM orders o
+        JOIN items i ON o.item_id = i.item_id
+        WHERE o.store_id = ?;    
     `;
     pool.getConnection((err, connection) => {
         if (err) {
@@ -533,14 +556,14 @@ app.get('/orders', (req, res) => {
             } else {
                 res.status(200).json(results);
             }
+            connection.release()
         });
-        connection.release()
     });
 }
 )
 
 app.get('/products/count', (req, res) => {
-    const store_id = req.query.store_id; // Get the store_id from the query parameter
+    const store_id = req.query.store_id;
 
     const query = `
     SELECT COUNT(*) AS count FROM store_items WHERE store_id = ?;    
@@ -565,9 +588,9 @@ app.get('/products/count', (req, res) => {
         });
         connection.release()
     });
-  });
+});
   
-  app.get('/employees/count', (req, res) => {
+app.get('/employees/count', (req, res) => {
     const store_id = req.query.store_id; // Get the store_id from the query parameter
 
     const query = `
@@ -590,11 +613,12 @@ app.get('/products/count', (req, res) => {
                 console.log(results);
                 res.status(200).json(results);
             }
+            connection.release()
         });
-        connection.release()
   });
 })
-  app.get('/alerts/count', (req, res) => {
+
+app.get('/alerts/count', (req, res) => {
     const store_id = req.query.store_id; // Get the store_id from the query parameter
 
     const query = `
@@ -617,10 +641,11 @@ app.get('/products/count', (req, res) => {
                 console.log(results);
                 res.status(200).json(results);
             }
+            connection.release()
         });
-        connection.release()
   });
-  })
+})
+
 app.listen(8080, () => {
     console.log("Server is running on port 8080");
 });

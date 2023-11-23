@@ -40,10 +40,7 @@ function Analytics({ loginDetails }) {
                 // Handle the error as needed
             });
     }, [store_id]);
-    console.log(topCustomersData);
-    console.log(topSellingItemsData);
-    console.log(employeeOfTheMonthData);
-    console.log(leastSellingItemsData);
+
   // // top recurring customers with most purchases
   // employee of the month
   // top selling items

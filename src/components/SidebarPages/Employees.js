@@ -35,6 +35,26 @@ function formatDatesInPlace(employees) {
 }
 formatDatesInPlace(employees);
 
+const handleFireEmployee = (employeeId) => {
+  axios
+         .post("http://localhost:8080/fire-employee", {
+            store_id: store_id,
+            employee_id: employeeId
+         })
+         .then((response) => {
+            if (response.data.rows.length > 0) {
+               console.log("Success")
+            } else if (response.data.err) {
+               console.log(response.data.err);
+            } else {
+               console.log("Successfully sent req to server for " + store_id);
+            }
+         });
+
+
+  console.log(`Firing employee with ID: ${employeeId}`);
+};
+
   return (
     <div className='div'>
          <button onClick={() => navigate('/dashboard')} className="back-button">
@@ -48,6 +68,9 @@ formatDatesInPlace(employees);
               <th>Name</th>
               <th>Salary</th>
               <th>Date of Joining</th>
+              <th>E-mail ID</th>
+              <th>Phone Number</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +80,13 @@ formatDatesInPlace(employees);
                 <td>{employee.name}</td>
                 <td>{employee.salary}</td>
                 <td>{employee.date_of_joining}</td>
+                <td>{employee.email}</td>
+                <td>{employee.phone_number}</td>
+                <td>
+                <button onClick={() => handleFireEmployee(employee.employee_id)}>
+                  Fire
+                </button>
+              </td>
               </tr>
             ))}
           </tbody>
